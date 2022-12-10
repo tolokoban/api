@@ -30,15 +30,7 @@ const router = createBrowserRouter(
 
 export default function App({ onLoad }: { onLoad: () => void }) {
     const [entrypoints, setEntrypoints] = useStateEntrypoints()
-    React.useEffect(() => {
-        loadText("./protocol.d.ts")
-            .then(content => {
-                const parser = new Parser(content)
-                setEntrypoints(parser.parse())
-                onLoad()
-            })
-            .catch(console.error)
-    }, [])
+    React.useEffect(onLoad, [])
     return (
         <React.StrictMode>
             <RouterProvider router={router} />
