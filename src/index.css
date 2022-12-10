@@ -1,0 +1,26 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--theme-color-neutral);
+    color: var(--theme-color-on-neutral);
+}
+
+hr {
+    background: linear-gradient(
+        to right,
+        transparent,
+        currentColor,
+        currentColor,
+        transparent
+    );
+    border: none;
+    height: 1px;
+    margin: 1em 0;
+}

@@ -1,0 +1,40 @@
+.Scroll {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background: var(--theme-color-neutral-5);
+    color: var(--theme-color-on-neutral-5);
+    --banner-color: var(--theme-color-neutral-5);
+}
+
+.Scroll::before,
+.Scroll::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: var(--banner-size);
+    z-index: 1;
+}
+
+.Scroll::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--banner-color), transparent);
+}
+
+.Scroll::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--banner-color), transparent);
+}
+
+.Scroll > div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    z-index: 0;
+    padding: var(--banner-size) 0;
+}

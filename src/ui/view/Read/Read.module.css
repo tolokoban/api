@@ -1,0 +1,28 @@
+div.Read {
+    display: grid;
+    grid-template-columns: 1fr min(50vw, 360px) min(50vw, 360px) 1fr;
+}
+
+div.Read > * {
+    grid-column: 2/4;
+}
+
+div.Read > :global(*.full) {
+    grid-column: 1/5;
+}
+
+div.Read > :global(*.left) {
+    grid-column: 1/3;
+}
+
+div.Read > :global(*.right) {
+    grid-column: 3/5;
+}
+
+@media (max-width: 800px) {
+    div.Read > *,
+    div.Read > :global(*.left),
+    div.Read > :global(*.right) {
+        grid-column: 1/5;
+    }
+}

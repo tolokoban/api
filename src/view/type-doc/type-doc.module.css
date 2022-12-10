@@ -1,0 +1,75 @@
+.TypeDoc {
+    margin: 0 0 0 -0.5rem;
+}
+
+.TypeDoc pre {
+    margin: 0;
+}
+
+.TypeDoc :global(div.indent) {
+    margin: 0 0 0 1rem;
+    padding: 0;
+}
+
+.TypeDoc :global(div.code) {
+    font-family: monospace;
+}
+
+.TypeDoc :global(.doc) {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.5;
+    display: inline-block;
+}
+
+.TypeDoc :global(.att-key) {
+    color: #630;
+    font-weight: 900;
+}
+
+.TypeDoc :global(.type-array) {
+    color: #806;
+}
+
+.TypeDoc :global(.type-number) {
+    color: #136;
+}
+
+.TypeDoc :global(.type-string) {
+    color: #082;
+}
+
+.TypeDoc :global(.type-boolean) {
+    color: #088;
+}
+
+.TypeDoc :global(.error) {
+    color: #fff;
+    background: #f00;
+    box-shadow: 0 0 4px #f00;
+}
+
+.TypeDoc a,
+.TypeDoc a:visited {
+    color: var(--thm-bgPD);
+    text-decoration: none;
+    box-shadow: 0 -2px 0 inset var(--thm-bgPL);
+}
+
+.TypeDoc :global(.doc) strong {
+    font-weight: 900;
+    background: #ff07;
+}
+
+.TypeDoc :global(.doc) code {
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: #f707;
+}
+
+.TypeDoc :global(span.optional) {
+    font-size: 90%;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-variant: small-caps;
+    margin-right: 0.5rem;
+}

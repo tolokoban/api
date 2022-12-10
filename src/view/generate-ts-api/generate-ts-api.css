@@ -1,0 +1,125 @@
+/* github.com style (c) Vasily Polovnyov <vast@whiteants.net> */
+div.view-GenerateTsApi {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    max-height: calc(100vh - 6rem);
+}
+
+div.view-GenerateTsApi .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    color: #333;
+    background: #f8f8f8;
+}
+
+div.view-GenerateTsApi .hljs-comment,
+div.view-GenerateTsApi .hljs-quote {
+    color: #998;
+    font-style: italic;
+}
+
+div.view-GenerateTsApi .hljs-keyword,
+div.view-GenerateTsApi .hljs-selector-tag,
+div.view-GenerateTsApi .hljs-subst {
+    color: #333;
+    font-weight: bold;
+}
+
+div.view-GenerateTsApi .hljs-number,
+div.view-GenerateTsApi .hljs-literal,
+div.view-GenerateTsApi .hljs-variable,
+div.view-GenerateTsApi .hljs-template-variable,
+div.view-GenerateTsApi .hljs-tag div.view-GenerateTsApi .hljs-attr {
+    color: #008080;
+}
+
+div.view-GenerateTsApi .hljs-string,
+div.view-GenerateTsApi .hljs-doctag {
+    color: #d14;
+}
+
+div.view-GenerateTsApi .hljs-title,
+div.view-GenerateTsApi .hljs-section,
+div.view-GenerateTsApi .hljs-selector-id {
+    color: #900;
+    font-weight: bold;
+}
+
+div.view-GenerateTsApi .hljs-subst {
+    font-weight: normal;
+}
+
+div.view-GenerateTsApi .hljs-type,
+div.view-GenerateTsApi .hljs-class div.view-GenerateTsApi .hljs-title {
+    color: #458;
+    font-weight: bold;
+}
+
+div.view-GenerateTsApi .hljs-tag,
+div.view-GenerateTsApi .hljs-name,
+div.view-GenerateTsApi .hljs-attribute {
+    color: #000080;
+    font-weight: normal;
+}
+
+div.view-GenerateTsApi .hljs-regexp,
+div.view-GenerateTsApi .hljs-link {
+    color: #009926;
+}
+
+div.view-GenerateTsApi .hljs-symbol,
+div.view-GenerateTsApi .hljs-bullet {
+    color: #990073;
+}
+
+div.view-GenerateTsApi .hljs-built_in,
+div.view-GenerateTsApi .hljs-builtin-name {
+    color: #0086b3;
+}
+
+div.view-GenerateTsApi .hljs-meta {
+    color: #999;
+    font-weight: bold;
+}
+
+div.view-GenerateTsApi .hljs-deletion {
+    background: #fdd;
+}
+
+div.view-GenerateTsApi .hljs-addition {
+    background: #dfd;
+}
+
+div.view-GenerateTsApi .hljs-emphasis {
+    font-style: italic;
+}
+
+div.view-GenerateTsApi .hljs-strong {
+    font-weight: bold;
+}
+
+div.view-GenerateTsApi>div.code {
+    flex: 1 1 auto;
+    font-size: 80%;
+    position: relative;
+    overflow-y: auto;
+}
+
+div.view-GenerateTsApi>header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+div.view-GenerateTsApi>header>* {
+    flex: 0 0 auto;
+}
+
+div.view-GenerateTsApi>header>*:first-child {
+    flex: 1 1 auto;
+}

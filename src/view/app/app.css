@@ -1,0 +1,38 @@
+body {
+    font-family: josefin-sans, sans-serif;
+}
+
+div.view-App {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+h1 {
+    background: var(--thm-color-PD);
+    color: var(--thm-color-on-PD);
+    font-weight: 900;
+    margin: .5rem 0 1.5rem 0;
+    line-height: 1.5;
+    font-size: 150%;
+    padding: 0 1rem;
+    border: none;
+    border-image: none;
+}
+
+h2 {
+    font-size: 130%;
+}
+
+div#splash-screen.vanish {
+    opacity: 0;
+    transition: opacity .9s;
+}
+
+pre.error {
+    font-size: .8rem;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
+}

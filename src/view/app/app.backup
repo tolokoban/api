@@ -1,0 +1,172 @@
+// import React from "react"
+// import Parser from "../../parser"
+// import { loadText } from "../../tools/load-text"
+// import { storageGet, storageSet } from "../../tools/storage"
+// import { IEntrypoint } from "../../types"
+// import GenerateTsApi from "../generate-ts-api"
+// import MethodDoc from "../method-doc"
+// import Panel from "../panel"
+// import "./app.css"
+
+// interface IAppProps {
+//     className?: string[]
+//     onLoad(): void
+// }
+// interface IAppState {
+//     methods: IEntrypoint[]
+//     selectedMethodName: string
+// }
+
+// export default class App extends React.Component<IAppProps, IAppState> {
+//     state = {
+//         methods: [],
+//         selectedMethodName: storageGet("selectedMethodName"),
+//     }
+
+//     async componentDidMount() {
+//         const content = await loadText("./protocol.d.ts")
+//         this.parseProtocolDefinition(content)
+//         this.props.onLoad()
+//     }
+
+//     private parseProtocolDefinition(content: string) {
+//         try {
+//             const parser = new Parser(content)
+//             const methods = parser.parse()
+//             this.setState({ methods })
+//             if (methods.length > 0) {
+//                 const selectedMethodName = storageGet(
+//                     "selectedMethodName",
+//                     methods[0].name
+//                 )
+//                 storageSet("selectedMethodName", selectedMethodName)
+//                 this.setState({ selectedMethodName })
+//             }
+//         } catch (ex) {
+//             console.error("Error in protocol definition")
+//             console.error(ex)
+//             // Dialog.error(
+//             //     <div>
+//             //         <h2>Error in protocol definition</h2>
+//             //         <pre className="error">{`${ex}`}</pre>
+//             //     </div>
+//             // )
+//         }
+//     }
+
+//     private handleUpload = () => {
+//         const dialog = Dialog.show({
+//             footer: null,
+//             title: "Upload Protocol Definition",
+//             closeOnEscape: true,
+//             align: "TL",
+//             icon: "import",
+//             content: (
+//                 <div style={{ maxWidth: "400px" }}>
+//                     <p>
+//                         You can upload any protocol definition file and get the
+//                         documentation automagically generated.
+//                     </p>
+//                     <InputFile
+//                         label="TypeScript definition file (*.d.ts)"
+//                         accept=".d.ts"
+//                         icon="import"
+//                         wide={true}
+//                         onClick={async (files: FileList) => {
+//                             dialog.hide()
+//                             const file = files.item(0)
+//                             if (!file) return
+//                             const content = await InputFile.readFileAsText(file)
+//                             this.parseProtocolDefinition(content)
+//                         }}
+//                     />
+//                     <br />
+//                     <h2>Need some info about protocol format?</h2>
+//                     <ul>
+//                         <li>
+//                             Methods are defined as exported interfaces with
+//                             three mandatory attributes:
+//                             <ul>
+//                                 <li>
+//                                     <b>params</b>: Actually, a method has only
+//                                     one param. Here you define its type. Of
+//                                     course this type can be an object with
+//                                     several attributes.
+//                                 </li>
+//                                 <li>
+//                                     <b>result</b>: The same apply to the
+//                                     _result_ type.
+//                                 </li>
+//                                 <li>
+//                                     <b>error</b>: Enum of possible error codes.
+//                                     <br />
+//                                     Examples:{" "}
+//                                     <ul>
+//                                         <li>
+//                                             <pre>{`error: {
+//     // Path not found
+//     PATH_NOT_FOUND,
+//     // Permission denied
+//     PERMISSION_DENIED
+// }`}</pre>
+//                                         </li>
+//                                         <li>
+//                                             <pre>{`error: { A, B: 5, C }`}</pre>
+//                                         </li>
+//                                     </ul>
+//                                 </li>
+//                             </ul>
+//                         </li>
+//                         <li>
+//                             Multi-line comments (<code>{"/* ... */"}</code>) are
+//                             ignored.
+//                         </li>
+//                         <li>
+//                             Single-line comments (<code>{"// ..."}</code>) are
+//                             used to add descriptions to the types you define.
+//                             Markdown syntax is supported.
+//                         </li>
+//                     </ul>
+//                 </div>
+//             ),
+//         })
+//     }
+
+//     handleGenerate = () => {
+//         const dialog = Dialog.show({
+//             footer: null,
+//             title: "Generate API Typescript code",
+//             closeOnEscape: true,
+//             align: "TR",
+//             icon: "import",
+//             content: <GenerateTsApi methods={this.state.methods} />,
+//         })
+//     }
+
+//     render() {
+//         const classes = [
+//             "view-App",
+//             ...Tfw.Converter.StringArray(this.props.className, []),
+//         ]
+//         const currentMethod: IEntrypoint | undefined = this.state.methods.find(
+//             (method: IEntrypoint) =>
+//                 method.name === this.state.selectedMethodName
+//         )
+
+//         return (
+//             <div className={classes.join(" ")}>
+//                 <Panel
+//                     methods={this.state.methods}
+//                     selectedMethodName={this.state.selectedMethodName}
+//                     onUploadClick={this.handleUpload}
+//                     onGenerateClick={this.handleGenerate}
+//                     onClick={selectedMethodName => {
+//                         storageSet("selectedMethodName", selectedMethodName)
+//                         this.setState({ selectedMethodName })
+//                     }}
+//                 />
+//                 {currentMethod && <MethodDoc method={currentMethod} />}
+//             </div>
+//         )
+//     }
+// }

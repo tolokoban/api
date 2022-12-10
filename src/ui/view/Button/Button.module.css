@@ -1,0 +1,29 @@
+.Button {
+    font: inherit;
+    border: none;
+    cursor: pointer;
+    font-variant: small-caps;
+    background: none;
+    box-shadow: 0 0.125em 0.25em #0007;
+    border-radius: 999vmax;
+    transition: all 0.2s;
+    padding: 0 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.Button[disabled] {
+    cursor: default;
+    box-shadow: none;
+    filter: grayscale(100%);
+}
+
+.Button:active {
+    filter: brightness(130%);
+    box-shadow: 0 0.25em 0.5em #0005;
+}
+
+.Button:focus {
+    outline: 1px solid currentColor;
+}

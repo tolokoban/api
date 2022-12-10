@@ -1,0 +1,13 @@
+.Panel {
+    margin: 0;
+    padding: 0;
+    place-items: center;
+}
+
+.Panel > :global(*.flex-0) {
+    flex: 0 0 auto;
+}
+
+.Panel > :global(*.flex-1) {
+    flex: 1 1 auto;
+}

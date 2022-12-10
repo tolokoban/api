@@ -1,0 +1,93 @@
+.MethodDoc {
+    padding: 1rem;
+    overflow: auto;
+    max-height: 100vh;
+    flex: 1 1 auto;
+}
+
+.MethodDoc :global(.error-code-name) {
+    font-family: monospace;
+    padding: 3px 6px;
+    margin: 8px 0 4px 0;
+    display: inline-block;
+}
+
+.MethodDoc :global(.error-code-number) {
+    font-weight: bolder;
+}
+
+.MethodDoc :global(.doc) {
+    opacity: 0.5;
+}
+
+.MethodDoc :global(div.dependency) {
+    display: block;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0.25rem;
+    text-decoration: none;
+    box-shadow: none;
+    border-radius: 1rem;
+}
+
+.MethodDoc a[id] {
+    text-decoration: none;
+    border: none;
+    box-shadow: none;
+}
+
+.MethodDoc header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 1rem 0 0 0;
+    text-decoration: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.MethodDoc header > * {
+    margin-right: 1rem;
+}
+
+.MethodDoc header h3 {
+    margin: 0 1rem 0 0;
+}
+
+.MethodDoc :global(div.inherited) {
+    font-style: italic;
+    background-color: var(--thm-black-1);
+    margin-left: -0.5rem;
+    padding: 0.5rem;
+}
+
+.MethodDoc :global(div.from) {
+    font-size: 90%;
+    margin-top: 1rem;
+    font-style: normal;
+}
+
+.MethodDoc :global(.flex) {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.MethodDoc :global(.flex) > * {
+    flex: 0 0 auto;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    background-color: var(--theme-color-neutral-4);
+    color: var(--theme-color-on-neutral-4);
+}
+
+.MethodDoc :global(.flex) > * h2 {
+    margin: 0;
+}
+
+.MethodDoc h1 {
+    font-family: monospace;
+}
