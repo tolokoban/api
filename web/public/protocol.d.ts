@@ -26,6 +26,8 @@ export interface auth_register {
     }
 }
 
+// Analyse thoughts.
+// @secure
 export interface thoughts {
     params: {
         text: string
@@ -33,10 +35,7 @@ export interface thoughts {
     result: {
         thoughtId: number
         text: string
-        distortions: Array<{
-            name: string
-            score: number
-        }>
+        distortions: { [name: string]: number }
     }
     error: {
         // Authentication token is missing or invalid
