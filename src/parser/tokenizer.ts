@@ -21,11 +21,12 @@ export enum EnumToken {
     Pipe,
     Identifier,
     ArrayType,
-    StringType, // 20
+    RecordType, // 20
+    StringType,
     NumberType,
     BooleanType,
     QuestionMark,
-    Extends,
+    Extends, // 25
 }
 
 export interface IToken {
@@ -53,6 +54,7 @@ const STATIC_TOKENS: Array<[string, EnumToken]> = [
     ["export", EnumToken.Export],
     ["interface", EnumToken.Interface],
     ["Array", EnumToken.ArrayType],
+    ["Record", EnumToken.RecordType],
     ["string", EnumToken.StringType],
     ["number", EnumToken.NumberType],
     ["boolean", EnumToken.BooleanType],

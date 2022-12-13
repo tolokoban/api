@@ -10,6 +10,7 @@ import {
     IError,
     IEnums,
     IAttrib,
+    ITypeRecord,
 } from "./types.js"
 import { ensureFloat, ensureInt, isObject } from "../tools/type-guards.js"
 import { parseComment } from "./comment.js"
@@ -285,6 +286,8 @@ which is of type "${aliasType.kind}" instead of "enum"!`
                 }
             case EnumToken.ArrayType:
                 return this.parseArray()
+            case EnumToken.RecordType:
+                return this.parseRecord()
             case EnumToken.OpenCurlyBracket:
                 this.back()
                 return this.parseObject()
@@ -397,6 +400,28 @@ which is of type "${aliasType.kind}" instead of "enum"!`
         )
         return {
             kind: "array",
+            comment: "",
+            subtype,
+        }
+    }
+
+    parseRecord(): ITypeRecord {
+        this.ensureNextIs(
+            EnumToken.OpenAngleBracket,
+            'Expected "<" after Record!'
+        )
+        const keyType = this.parseAny()
+        if (keyType.kind !== "string") {
+            throw "In a Record<>, only strings are accepted as key type!"
+        }
+        this, this.ensureNextIs(EnumToken.Comma, "A comma was expected here!")
+        const subtype = this.parseAny()
+        this.ensureNextIs(
+            EnumToken.CloseAngleBracket,
+            'Expected ">" at the end of Record definition!'
+        )
+        return {
+            kind: "record",
             comment: "",
             subtype,
         }

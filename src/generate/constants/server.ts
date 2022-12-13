@@ -1,0 +1,94 @@
+export const SERVER = `import ExpressFactory, { Express } from "express"
+//{{IMPORTS}}
+
+const UNEXPECTED_ERROR = -1
+
+export interface ApiContext<Errors> {
+    token: string
+    fatal(code: Errors): never
+}
+
+type ApiHandler<Params, Result, Errors> = (
+    params: Params,
+    context: ApiContext<Errors>
+) => Promise<Result>
+
+export default class Api {
+    //{{HANDLERS}}
+
+    constructor(
+        private readonly app: Express,
+        private readonly validateToken: (token: string) => Promise<boolean>
+    ) {
+        app.use(ExpressFactory.json())
+        //{{ROUTES}}
+    }
+
+    private post<Params, Result, Errors>(
+        route: string,
+        isType: (data: unknown) => data is Params,
+        action: ApiHandler<Params, Result, Errors>,
+        secure: boolean
+    ) {
+        this.app.post(route, async (req, res) => {
+            const BEARER = "Bearer "
+            let token = req.header("Authorization") ?? ""
+            if (token.startsWith(BEARER)) {
+                token = token.substring(BEARER.length).trim()
+            }
+            if (secure) {
+                const isValidToken = await this.validateToken(token)
+                if (!isValidToken) {
+                    res.status(401).json(0)
+                }
+            }
+            const params: Record<string, unknown> = req.body
+            if (isType(params)) {
+                try {
+                    const result = await action(
+                        {
+                            ...params,
+                            $token: token,
+                        }, {
+                            token,
+                            fatal(c: Errors) {
+                                console.error(\`Error in "\${route}":\`, c)
+                                throw { code: c }
+                            }
+                        }
+                    )
+                    res.status(200).json(result)
+                    return
+                } catch (ex) {
+                    if (ex instanceof Error) {
+                        res.status(500).json({
+                            code: UNEXPECTED_ERROR,
+                            detail: ex.message,
+                        })
+                    }
+                    else if (
+                        ex &&
+                        typeof ex === "object" &&
+                        "code" in ex &&
+                        typeof ex.code === "number"
+                    ) {
+                        res.status(500).json(ex)
+                    }
+                    else {
+                        res.status(500).json({
+                            code: UNEXPECTED_ERROR,
+                            detail: JSON.stringify(ex),
+                        })
+                    }
+                }
+                return
+            }
+            // Invalid params.
+            res.status(400).json(0)
+        })
+    }
+}
+
+//{{TYPES}}
+
+//{{TYPE_GUARDS}}`

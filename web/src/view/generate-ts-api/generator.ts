@@ -43,7 +43,7 @@ function generateCodeForClass(methods: IEntrypoint[]): string {
             )
         }
         code.push(
-            `    async call${name}(params: IAPI${name}Params): Promise<IAPI${name}Result> {`,
+            `    async call${name}(params: IAPIParams${name}): Promise<IAPIResult${name}> {`,
             "        return new Promise(async (resolve, reject) =>",
             `            this.call("${name}", params, resolve, reject))`,
             "}"
@@ -95,11 +95,11 @@ function generateCodeForEntryPointTypes(methods: IEntrypoint[]): string {
         const typeParams = method.input
         if (isTypeObject(typeParams)) {
             code.push(
-                ...generateCodeForExportedTypes(`IAPI${name}Params`, typeParams)
+                ...generateCodeForExportedTypes(`IAPIParams${name}`, typeParams)
             )
         } else {
             code.push(
-                `export type IAPI${name}Params = ${getCodeForType(typeParams)}`
+                `export type IAPIParams${name} = ${getCodeForType(typeParams)}`
             )
         }
 
@@ -108,13 +108,13 @@ function generateCodeForEntryPointTypes(methods: IEntrypoint[]): string {
         if (isTypeObject(typeReturns)) {
             code.push(
                 ...generateCodeForExportedTypes(
-                    `IAPI${name}Result`,
+                    `IAPIResult${name}`,
                     typeReturns
                 )
             )
         } else {
             code.push(
-                `export type IAPI${name}Result = ${getCodeForType(typeReturns)}`
+                `export type IAPIResult${name} = ${getCodeForType(typeReturns)}`
             )
         }
     }

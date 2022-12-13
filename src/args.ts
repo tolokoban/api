@@ -11,26 +11,25 @@ export function parseArgs() {
 
     inputPath = input
     for (let i = 0; i < outputs.length; i += 2) {
-        const key = outputs[i]
+        const key = outputs[i]?.toLocaleLowerCase()
         const val = outputs[i + 1]
         switch (key) {
-            case "-d":
-            case "--doc":
+            case "doc":
                 docPath = val
                 break
-            case "-c":
-            case "--client":
+            case "cli":
+            case "client":
                 clientPath = val
                 break
-            case "-s":
-            case "--server":
+            case "server":
+            case "svr":
+            case "srv":
                 serverPath = val
                 break
             default:
                 usage()
         }
     }
-    console.log("🚀 [args] process.argv = ", process.argv) // @FIXME: Remove this line written on 2022-12-11 at 18:20
     return { inputPath, docPath, clientPath, serverPath }
 }
 
@@ -39,7 +38,7 @@ function usage(): never {
     console.log("Usage:")
     console.log(
         Chalk.whiteBright.bold(
-            "ts-node-esm api.ts <protocol filename> [--doc <path>] [--client <path>] [--server <path>]"
+            "ts-node-esm api.ts <protocol filename> [DOC <path>] [CLIENT <path>] [SERVER <path>]"
         )
     )
     console.log()
