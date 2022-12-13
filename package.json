@@ -1,17 +1,23 @@
 {
     "name": "@tolokoban/api",
-    "version": "0.1.0",
-    "description": "",
+    "version": "0.3.0",
+    "description": "Quick Typescript code generator for simple and robust RPC applications based on a subset of REST protocol.",
+    "private": false,
     "bin": {
         "api": "./bin/api.js"
     },
     "type": "module",
     "scripts": {
         "build": "tsc --outDir bin",
+        "pub": "npm publish --access public",
         "start": "ts-node-esm ./src/api.ts"
     },
-    "author": "Tolokoban",
+    "author": "Tolokoban <contact@tolokoban.org>",
     "license": "GPL-3.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tolokoban/api.git"
+    },
     "dependencies": {
         "chalk": "^5.2.0",
         "readline-sync": "^1.4.10"
