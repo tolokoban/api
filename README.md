@@ -5,11 +5,22 @@ on a subset of REST protocol.
 
 ## Usage
 
+Install it like this:
+
 ```bash
-npx @tolokoban/api protocol.ts \
-    DOC ./doc \
-    CLIENT ./client \
-    SERVER ./server/api
+npm install --save-dev @tolokoban/api
+```
+
+Start it like this:
+
+```bash
+npx api config.json5
+```
+
+If you need help in creating an initial configuration file, just type:
+
+```bash
+npx api --init
 ```
 
 ## Motivation

@@ -11,7 +11,7 @@ import {
     generateTypeGuard,
     prefix,
 } from "./common.js"
-import { CLIENT } from "./constants/client.js"
+import { CLIENT } from "../constants/client.js"
 import { applyTemplate } from "./template.js"
 
 export function generateClient(

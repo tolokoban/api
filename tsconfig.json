@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "declaration": true,
+        "declaration": false,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "jsx": "react",
         "lib": ["DOM", "DOM.Iterable", "ES2020"],
         "module": "node16",
         "moduleDetection": "force",
@@ -19,12 +18,14 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "pretty": true,
-        "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
+        "removeComments": true,
+        "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,
         "stripInternal": true,
         "target": "ES2020", // Node.js 14
         "useDefineForClassFields": true
     },
+    "files": ["./src/api.ts"],
     "exclude": ["bin/", "tmp/", "web/"]
 }

@@ -1,9 +1,7 @@
-import Chalk from "chalk"
-import FS from "fs"
 import Path from "path"
 import { IEntrypoint } from "../parser/types.js"
 import { capitalizedCamelCase } from "../tools/case.js"
-import { isDir } from "../tools/files.js"
+import { isDir, mkdir, writeFile } from "../tools/files.js"
 import { CodeBlock, linearize } from "../tools/linearize.js"
 import {
     generateAsserts,
@@ -13,12 +11,18 @@ import {
     generateTypeImplementation,
     prefix,
 } from "./common.js"
-import { SERVER } from "./constants/server.js"
+import {
+    SERVER_INDEX,
+    SERVER_PACKAGE,
+    SERVER_TSCONFIG,
+} from "../constants/index.js"
+import { SERVER } from "../constants/index.js"
 import { applyTemplate } from "./template.js"
 
 export function generateServer(
     root: string | undefined,
-    protocol: IEntrypoint[]
+    protocol: IEntrypoint[],
+    scaffolder = false
 ) {
     if (!root) return
 
@@ -26,6 +30,7 @@ export function generateServer(
         throw Error(`Folder does not exist: ${root}`)
     }
 
+    const src = Path.resolve(root, "src")
     const imports: CodeBlock = []
     const handlers: CodeBlock = []
     const routes: CodeBlock = []
@@ -35,7 +40,11 @@ export function generateServer(
         const name = capitalizedCamelCase(entrypoint.name)
         const path = `routes/${entrypoint.name}`
         imports.push(`import implement${name} from "./${path}/index.js"`)
-        generateImplementationFileIfNotAlreadyDone(entrypoint, root, path)
+        generateImplementationFileIfNotAlreadyDone(
+            entrypoint,
+            scaffolder ? src : root,
+            path
+        )
         handlers.push(
             `private readonly on${name}: ApiHandler<Params${name}, Result${name}, Errors${name}> = implement${name}`
         )
@@ -59,7 +68,15 @@ export function generateServer(
         ],
         TYPE_GUARDS: typeGuards,
     })
-    FS.writeFileSync(Path.resolve(root, "api.ts"), content)
+    if (scaffolder) {
+        mkdir(src)
+        writeFile(Path.resolve(src, "api.ts"), content, true)
+        writeFile(Path.resolve(src, "index.ts"), SERVER_INDEX, false)
+        writeFile(Path.resolve(root, "package.json"), SERVER_PACKAGE, false)
+        writeFile(Path.resolve(root, "tsconfig.json"), SERVER_TSCONFIG, false)
+    } else {
+        writeFile(Path.resolve(root, "api.ts"), content, true)
+    }
 }
 
 function generateImplementationFileIfNotAlreadyDone(
@@ -69,12 +86,7 @@ function generateImplementationFileIfNotAlreadyDone(
 ) {
     const name = capitalizedCamelCase(entrypoint.name)
     const absPath = Path.resolve(root, path)
-    FS.mkdirSync(absPath, { recursive: true, mode: 0o777 })
-    if (FS.existsSync(Path.resolve(absPath, "index.ts"))) {
-        console.log(Chalk.gray("Route already implemented:"), entrypoint.name)
-        return
-    }
-
+    mkdir(absPath)
     const code: CodeBlock = [
         "import {",
         [`Params${name},`, `Result${name},`, `Errors${name},`, "ApiContext"],
@@ -97,9 +109,11 @@ function generateImplementationFileIfNotAlreadyDone(
         `): Promise<Result${name}> {`,
         [
             "// @TODO: Implement this route.",
+            "console.log(params)",
+            "console.log(context)",
             ...prefix(generateTypeImplementation(entrypoint.output), "return "),
         ],
         "}",
     ]
-    FS.writeFileSync(Path.resolve(absPath, "index.ts"), linearize(code))
+    writeFile(Path.resolve(absPath, "index.ts"), linearize(code), false)
 }

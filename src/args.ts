@@ -1,62 +1,84 @@
-import Chalk from "chalk"
+import FS from "fs"
+import JSON5 from "json5"
+import { initConfigFile } from "./init.js"
+import { usage } from "./usage.js"
+import { printError } from "./print.js"
+import { assertObject, assertString } from "./type-guards.js"
 
-export function parseArgs() {
-    let inputPath: string | undefined = undefined
-    let docPath: string | undefined = undefined
-    let clientPath: string | undefined = undefined
-    let serverPath: string | undefined = undefined
-    const [_node, _file, ...args] = process.argv
-    const [input, ...outputs] = args
-    if (!input) usage()
-
-    inputPath = input
-    for (let i = 0; i < outputs.length; i += 2) {
-        const key = outputs[i]?.toLocaleLowerCase()
-        const val = outputs[i + 1]
-        switch (key) {
-            case "doc":
-                docPath = val
-                break
-            case "cli":
-            case "client":
-                clientPath = val
-                break
-            case "server":
-            case "svr":
-            case "srv":
-                serverPath = val
-                break
-            default:
-                usage()
-        }
-    }
-    return { inputPath, docPath, clientPath, serverPath }
+export interface Options {
+    protocol: string
+    docPath?: string
+    clientPath?: string
+    serverPath?: string
+    serverScaffolder?: boolean
 }
 
-function usage(): never {
-    console.log()
-    console.log("Usage:")
-    console.log(
-        Chalk.yellowBright.bold(
-            "npx @tolokoban/api <protocol filename> [DOC <path>] [CLIENT <path>] [SERVER <path>]"
-        )
-    )
-    console.log()
-    console.log(
-        "",
-        Chalk.yellow("<protocol filename>"),
-        "is a file describing the API in a subset of Typescript"
-    )
-    console.log(
-        "",
-        Chalk.yellow("CLIENT <path>"),
-        "if given, generates the Client code in <path>."
-    )
-    console.log(
-        "",
-        Chalk.yellow("SERVER <path>"),
-        "if given, generates the Server code in <path>."
-    )
-    console.log()
-    process.exit(1)
+export function parseArgs(): Options {
+    const [_node, _file, ...args] = process.argv
+    if (args.length === 0) usage()
+
+    let configFilename: string | null = null
+    const options: Record<string, string | boolean> = {}
+    let currentOptionName: string | null = null
+    for (const arg of args) {
+        if (arg.startsWith("--")) {
+            currentOptionName = arg.substring(2)
+            options[currentOptionName] = true
+        } else {
+            if (currentOptionName) options[currentOptionName] = arg
+            else configFilename = arg
+        }
+    }
+    if (options["init"]) {
+        initConfigFile()
+        process.exit(0)
+    }
+    const config = parseConfig(configFilename, options)
+    if (config) return config
+    usage()
+}
+
+function parseConfig(
+    configFilename: string | null,
+    options: Record<string, string | boolean>
+): Options | null {
+    let data: unknown = options
+    if (configFilename) {
+        if (FS.existsSync(configFilename)) {
+            data = loadJson(configFilename) ?? options
+        }
+    }
+    try {
+        assertOptions(data)
+        return data
+    } catch (ex) {
+        printError("Invalid configuration!")
+        printError(`${ex}`)
+        process.exit(2)
+    }
+}
+
+function assertOptions(data: unknown): asserts data is Options {
+    if (!data) throw Error("Missing configuration!")
+    assertObject(data, "Config")
+    assertString(data["protocol"], "Config.protocol")
+    if (data["clientPath"]) {
+        assertString(data["clientPath"], "Config.clientPath")
+    }
+    if (data["serverPath"]) {
+        assertString(data["serverPath"], "Config.serverPath")
+    }
+    if (data["docPath"]) {
+        assertString(data["docPath"], "Config.docPath")
+    }
+}
+
+function loadJson(filename: string): unknown {
+    try {
+        const content = FS.readFileSync(filename).toString()
+        return JSON5.parse(content)
+    } catch (ex) {
+        printError(`"${filename}" is not a valid JSON5 file!`)
+        return null
+    }
 }

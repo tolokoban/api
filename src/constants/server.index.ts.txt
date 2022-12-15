@@ -1,0 +1,17 @@
+import ExpressFactory, { Express } from "express"
+import Api from "./api.js"
+
+const [_node, _file, arg] = process.argv
+const port = parseInt(arg ?? "7777")
+const app: Express = ExpressFactory()
+new Api(
+    app,
+    /**
+     * @TODO: Replace this dummy function with a real token checker
+     * if you want to implement secure entrypoints.
+     */
+    (token: string) => new Promise(resolve => resolve(token.length > 0))
+)
+app.listen(port, () =>
+    console.log(`Server is ready and listening on port ${port}`)
+)

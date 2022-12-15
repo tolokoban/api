@@ -109,7 +109,11 @@ export function generateTypeGuard(
                 "return true",
             ],
             "} catch (ex) {",
-            ["console.error(ex)", "return false"],
+            [
+                'if (ex instanceof Error) console.error("###", ex.message)',
+                "else console.error(ex)",
+                "return false",
+            ],
             "}",
         ],
         "}",
