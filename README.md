@@ -25,8 +25,10 @@ npx api --init
 
 ## Usecase
 
-See this [short video](./doc/api.mp4) where we show an example of
+See this short video where we show an example of
 a very simple math application.
+
+https://user-images.githubusercontent.com/3356894/207921623-f5ab8a38-588d-4347-8caa-ddb46e2870aa.mp4
 
 You can see that implementing an entrypoint is quite easy and Typescript
 gives a lot of autocompletion out of the box.
