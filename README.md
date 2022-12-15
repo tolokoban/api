@@ -23,6 +23,14 @@ If you need help in creating an initial configuration file, just type:
 npx api --init
 ```
 
+## Usecase
+
+See this [short video](./doc/api.mp4) where we show an example of
+a very simple math application.
+
+You can see that implementing an entrypoint is quite easy and Typescript
+gives a lot of autocompletion out of the box.
+
 ## Motivation
 
 When creating a RPC client/server application, we want to focus on the precise
