@@ -1,6 +1,6 @@
 {
     "name": "@tolokoban/api",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "description": "Quick Typescript code generator for simple and robust RPC applications based on a subset of REST protocol.",
     "private": false,
     "bin": {

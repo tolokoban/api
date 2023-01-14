@@ -59,8 +59,9 @@ export function generateServer(
         )
     }
     const content = applyTemplate(SERVER, {
-        IMPORTS: imports,
+        ERRORS: generateErrors(protocol),
         HANDLERS: handlers,
+        IMPORTS: imports,
         ROUTES: routes,
         TYPES: [
             ...generateEntrypointsTypes(protocol),
@@ -116,4 +117,14 @@ function generateImplementationFileIfNotAlreadyDone(
         "}",
     ]
     writeFile(Path.resolve(absPath, "index.ts"), linearize(code), false)
+}
+
+function generateErrors(protocol: IEntrypoint[]): CodeBlock {
+    const code: CodeBlock = protocol.map(
+        entrypoint =>
+            `"${entrypoint.name}": [${entrypoint.errors
+                .map(item => `"${item.name} (#${item.value})"`)
+                .join(", ")}],`
+    )
+    return code
 }

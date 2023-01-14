@@ -13,13 +13,31 @@ type ApiHandler<Params, Result, Errors> = (
     context: ApiContext<Errors>
 ) => Promise<Result>
 
+export interface ApiOptions {
+    validateToken(token: string): Promise<boolean>
+    logError(...params: unknown[]): void
+    logInfo(...params: unknown[]): void
+}
+
 export default class Api {
+    private readonly options: ApiOptions
+
     //{{HANDLERS}}
 
-    constructor(
-        private readonly app: Express,
-        private readonly validateToken: (token: string) => Promise<boolean>
-    ) {
+    constructor(private readonly app: Express, options: Partial<ApiOptions>) {
+        this.options = {
+            validateToken: () => {
+                return new Promise(resolve => {
+                    this.options.logError(
+                        "Function validateToken() has not been defined!"
+                    )
+                    resolve(false)
+                })
+            },
+            logError: console.error,
+            logInfo: console.info,
+            ...options,
+        }
         app.use(ExpressFactory.json())
         //{{ROUTES}}
     }
@@ -37,9 +55,14 @@ export default class Api {
                 token = token.substring(BEARER.length).trim()
             }
             if (secure) {
-                const isValidToken = await this.validateToken(token)
+                const isValidToken = await this.options.validateToken(token)
                 if (!isValidToken) {
+                    this.options.logError(
+                        `Attempt to access "${route}" with invalid token:`,
+                        JSON.stringify(token)
+                    )
                     res.status(401).json(0)
+                    return
                 }
             }
             const params: Record<string, unknown> = req.body
@@ -52,8 +75,11 @@ export default class Api {
                         },
                         {
                             token,
-                            fatal(c: Errors) {
-                                console.error(`Error in "${route}":`, c)
+                            fatal: (c: Errors) => {
+                                this.options.logError(
+                                    `Error in "${route}":`,
+                                    lookupError(route, c as number)
+                                )
                                 throw { code: c }
                             },
                         }
@@ -62,6 +88,10 @@ export default class Api {
                     return
                 } catch (ex) {
                     if (ex instanceof Error) {
+                        this.options.logError(
+                            `Unexpected error in route "${route}":`,
+                            ex
+                        )
                         res.status(500).json({
                             code: UNEXPECTED_ERROR,
                             detail: ex.message,
@@ -83,7 +113,10 @@ export default class Api {
                 return
             }
             // Invalid params.
-            console.error(`### Invalid params for route "${route}":`, params)
+            this.options.logError(
+                `### Invalid params for route "${route}":`,
+                params
+            )
             res.status(400).json(0)
         })
     }
@@ -92,3 +125,15 @@ export default class Api {
 //{{TYPES}}
 
 //{{TYPE_GUARDS}}
+
+const ERRORS: { [route: string]: string[] } = {
+    //{{ERRORS}}
+}
+
+function lookupError(route: string, code: number): string {
+    if (route.charAt(0) === "/") route = route.substring(1)
+    const errorNames = ERRORS[route]
+    if (!errorNames) return `Unknown route, error #${code}`
+
+    return errorNames[code] ?? `#${code}`
+}
