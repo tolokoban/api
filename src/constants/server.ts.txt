@@ -48,7 +48,9 @@ export default class Api {
         action: ApiHandler<Params, Result, Errors>,
         secure: boolean
     ) {
+        console.log("Register route:", route)
         this.app.post(route, async (req, res) => {
+            console.log(">>", route, limit(req.body))
             const BEARER = "Bearer "
             let token = req.header("Authorization") ?? ""
             if (token.startsWith(BEARER)) {
@@ -136,4 +138,12 @@ function lookupError(route: string, code: number): string {
     if (!errorNames) return `Unknown route, error #${code}`
 
     return errorNames[code] ?? `#${code}`
+}
+
+function limit(data: unknown): string {
+    const LIMIT = 60
+    const txt = JSON.stringify(data)
+    if (txt.length < LIMIT) return txt
+
+    return `${txt.substring(0, LIMIT - 3)}...`
 }
