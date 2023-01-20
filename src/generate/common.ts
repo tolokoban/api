@@ -105,7 +105,7 @@ export function generateTypeGuard(
         [
             "try {",
             [
-                ...recursiveTypeGuard(type, "data", "data", 1, types),
+                ...recursiveTypeGuard(type, "data", "data", 1, types, false),
                 "return true",
             ],
             "} catch (ex) {",
@@ -127,73 +127,101 @@ function recursiveTypeGuard(
     prefixName: string,
     prefixLabel: string,
     level: number,
-    types: Set<string>
+    types: Set<string>,
+    optional: boolean
 ): CodeBlock {
+    const optionalWrapping = (factory: () => CodeBlock): CodeBlock => {
+        const code = factory()
+        if (!optional) return code
+
+        return [`if (typeof ${prefixName} !== "undefined") {`, code, "}"]
+    }
+
     switch (type.kind) {
         case "array":
-            types.add("array")
-            return [
-                `assertArray(${prefixName}, "${prefixLabel}")`,
-                `for (let idx${level} = 0; idx${level} < ${prefixName}.length ; idx${level}++) {`,
-                [
-                    `const ${prefixName}_idx${level} = ${prefixName}[idx${level}]`,
-                    ...recursiveTypeGuard(
-                        type.subtype,
-                        `${prefixName}_idx${level}`,
-                        `${prefixName}[index]`,
-                        level + 1,
-                        types
-                    ),
-                ],
-                "}",
-            ]
+            return optionalWrapping(() => {
+                types.add("array")
+                return [
+                    `assertArray(${prefixName}, "${prefixLabel}")`,
+                    `for (let idx${level} = 0; idx${level} < ${prefixName}.length ; idx${level}++) {`,
+                    [
+                        `const ${prefixName}_idx${level} = ${prefixName}[idx${level}]`,
+                        ...recursiveTypeGuard(
+                            type.subtype,
+                            `${prefixName}_idx${level}`,
+                            `${prefixName}[index]`,
+                            level + 1,
+                            types,
+                            false
+                        ),
+                    ],
+                    "}",
+                ]
+            })
         case "boolean":
-            types.add("boolean")
-            return [`assertBoolean(${prefixName}, "${prefixLabel}")`]
+            return optionalWrapping(() => {
+                types.add("boolean")
+                return [`assertBoolean(${prefixName}, "${prefixLabel}")`]
+            })
         case "enum":
         case "number":
-            types.add("number")
-            return [`assertNumber(${prefixName}, "${prefixLabel}")`]
+            return optionalWrapping(() => {
+                return optionalWrapping(() => {
+                    types.add("number")
+                    return [`assertNumber(${prefixName}, "${prefixLabel}")`]
+                })
+            })
         case "string":
-            types.add("string")
-            return [`assertString(${prefixName}, "${prefixLabel}")`]
+            return optionalWrapping(() => {
+                types.add("string")
+                return [`assertString(${prefixName}, "${prefixLabel}")`]
+            })
         case "object":
-            types.add("object")
-            const codeObject: CodeBlock = [
-                `assertObject(${prefixName}, "${prefixLabel}")`,
-            ]
-            for (const key of Object.keys(type.attribs)) {
-                codeObject.push(
-                    `const ${prefixName}_${key} = ${prefixName}["${key}"]`
-                )
-                for (const item of recursiveTypeGuard(
-                    type.attribs[key]?.type as IType,
-                    `${prefixName}_${key}`,
-                    `${prefixName}.${key}`,
-                    level + 1,
-                    types
-                )) {
-                    codeObject.push(item)
-                }
-            }
-            return codeObject
-        case "record":
-            types.add("object")
-            return [
-                `assertObject(${prefixName}, "${prefixLabel}")`,
-                `for (const key${level} of Object.keys(${prefixName})) {`,
-                [
-                    `const ${prefixName}_key${level} = ${prefixName}[key${level}]`,
-                    ...recursiveTypeGuard(
-                        type.subtype,
-                        `${prefixName}_key${level}`,
-                        `${prefixName}[key]`,
+            return optionalWrapping(() => {
+                types.add("object")
+                const codeObject: CodeBlock = [
+                    `assertObject(${prefixName}, "${prefixLabel}")`,
+                ]
+                for (const key of Object.keys(type.attribs)) {
+                    codeObject.push(
+                        `const ${prefixName}_${key} = ${prefixName}["${key}"]`
+                    )
+                    const att = type.attribs[key]
+                    if (!att) continue
+
+                    for (const item of recursiveTypeGuard(
+                        att.type as IType,
+                        `${prefixName}_${key}`,
+                        `${prefixName}.${key}`,
                         level + 1,
-                        types
-                    ),
-                ],
-                "}",
-            ]
+                        types,
+                        att.optional ?? false
+                    )) {
+                        codeObject.push(item)
+                    }
+                }
+                return codeObject
+            })
+        case "record":
+            return optionalWrapping(() => {
+                types.add("object")
+                return [
+                    `assertObject(${prefixName}, "${prefixLabel}")`,
+                    `for (const key${level} of Object.keys(${prefixName})) {`,
+                    [
+                        `const ${prefixName}_key${level} = ${prefixName}[key${level}]`,
+                        ...recursiveTypeGuard(
+                            type.subtype,
+                            `${prefixName}_key${level}`,
+                            `${prefixName}[key]`,
+                            level + 1,
+                            types,
+                            false
+                        ),
+                    ],
+                    "}",
+                ]
+            })
         default:
             return [`// Don't know how to deal with this type: ${type.kind}!`]
     }
