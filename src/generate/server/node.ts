@@ -1,8 +1,8 @@
 import Path from "path"
-import { IEntrypoint } from "../parser/types.js"
-import { capitalizedCamelCase } from "../tools/case.js"
-import { isDir, mkdir, writeFile } from "../tools/files.js"
-import { CodeBlock, linearize } from "../tools/linearize.js"
+import { IEntrypoint } from "../../parser/types.js"
+import { capitalizedCamelCase } from "../../tools/case.js"
+import { isDir, mkdir, writeFile } from "../../tools/files.js"
+import { CodeBlock, linearize } from "../../tools/linearize.js"
 import {
     generateAsserts,
     generateComment,
@@ -10,16 +10,16 @@ import {
     generateTypeGuard,
     generateTypeImplementation,
     prefix,
-} from "./common.js"
+} from "../common.js"
 import {
     SERVER_INDEX,
     SERVER_PACKAGE,
     SERVER_TSCONFIG,
-} from "../constants/index.js"
-import { SERVER } from "../constants/index.js"
-import { applyTemplate } from "./template.js"
+} from "../../constants/index.js"
+import { SERVER } from "../../constants/index.js"
+import { applyTemplate } from "../template.js"
 
-export function generateServer(
+export function generateServerNode(
     root: string | undefined,
     protocol: IEntrypoint[],
     scaffolder = false

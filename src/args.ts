@@ -3,7 +3,7 @@ import JSON5 from "json5"
 import { initConfigFile } from "./init.js"
 import { usage } from "./usage.js"
 import { printError } from "./print.js"
-import { assertObject, assertString } from "./type-guards.js"
+import { assertType } from "@tolokoban/type-guards"
 
 export interface Options {
     protocol: string
@@ -11,6 +11,7 @@ export interface Options {
     clientPath?: string
     serverPath?: string
     serverScaffolder?: boolean
+    serverType?: "php" | "node"
 }
 
 export function parseArgs(): Options {
@@ -59,18 +60,14 @@ function parseConfig(
 }
 
 function assertOptions(data: unknown): asserts data is Options {
-    if (!data) throw Error("Missing configuration!")
-    assertObject(data, "Config")
-    assertString(data["protocol"], "Config.protocol")
-    if (data["clientPath"]) {
-        assertString(data["clientPath"], "Config.clientPath")
-    }
-    if (data["serverPath"]) {
-        assertString(data["serverPath"], "Config.serverPath")
-    }
-    if (data["docPath"]) {
-        assertString(data["docPath"], "Config.docPath")
-    }
+    assertType<Options>(data, {
+        protocol: "string",
+        docPath: ["?", "string"],
+        clientPath: ["?", "string"],
+        serverPath: ["?", "string"],
+        serverScaffolder: ["?", "boolean"],
+        serverType: ["?", ["literal", "php", "node"]],
+    })
 }
 
 function loadJson(filename: string): unknown {

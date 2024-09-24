@@ -1,15 +1,14 @@
 {
-    /** Generate code for Client */
-    clientPath: '/home/tolokoban/Code/github/api/tmp/client',
-    /** Generate code for Server */
-    serverPath: '/home/tolokoban/Code/github/api/tmp/server',
-    /**
-     * This will also create the following files:
-     * - `package.json`
-     * - `tsconfig.json`
-     * - `index.ts`
-     */
+    /** Generated code for Client */
+    clientPath: "./tmp/client",
+    /** Generated code for Server */
+    serverPath: "./tmp/server",
+    /** Generated code for documentation */
+    docPath: "./tmp/doc",
+    /** This will also create the files needed for a full server. */
     serverScaffolder: true,
+    /** Can be "node" or "php". */
+    serverType: "node",
     /** The following file owns the API definition */
-    protocol: 'protocol.d.ts'
+    protocol: "protocol.d.ts",
 }
